@@ -1,9 +1,9 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtBluetooth module of the Qt Toolkit.
+** This file is part of the examples of the QtBluetooth module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** Commercial License Usage
@@ -48,47 +48,50 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+import QtQuick 2.5
 
-#include "ui_device.h"
+Rectangle    {
+    id: titleBar
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: GameSettings.fieldHeight
+    color: GameSettings.viewColor
 
-#include <qbluetoothlocaldevice.h>
+    property var __titles: ["CONNECT", "MEASURE", "STATS"]
+    property int currentIndex: 0
 
-#include <QDialog>
+    signal titleClicked(int index)
 
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
+    Repeater {
+        model: 3
+        Text {
+            width: titleBar.width / 3
+            height: titleBar.height
+            x: index * width
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            text: __titles[index]
+            font.pixelSize: GameSettings.tinyFontSize
+            color: titleBar.currentIndex === index ? GameSettings.textColor : GameSettings.disabledTextColor
 
-QT_USE_NAMESPACE
-
-class DeviceDiscoveryDialog : public QDialog
-{
-    Q_OBJECT
-
-public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
-
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
+            MouseArea {
+                anchors.fill: parent
+                onClicked: titleClicked(index)
+            }
+        }
+    }
 
 
-private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
-};
+    Item {
+        anchors.bottom: parent.bottom
+        width: parent.width / 3
+        height: parent.height
+        x: currentIndex * width
 
-#endif
+        BottomLine{}
+
+        Behavior on x { NumberAnimation { duration: 200 } }
+    }
+
+}

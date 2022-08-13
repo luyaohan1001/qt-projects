@@ -1,9 +1,9 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtBluetooth module of the Qt Toolkit.
+** This file is part of the examples of the QtBluetooth module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** Commercial License Usage
@@ -48,47 +48,32 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+#ifndef DEVICEINFO_H
+#define DEVICEINFO_H
 
-#include "ui_device.h"
+#include <QString>
+#include <QObject>
+#include <QBluetoothDeviceInfo>
 
-#include <qbluetoothlocaldevice.h>
-
-#include <QDialog>
-
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
-
-QT_USE_NAMESPACE
-
-class DeviceDiscoveryDialog : public QDialog
+class DeviceInfo: public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString deviceName READ getName NOTIFY deviceChanged)
+    Q_PROPERTY(QString deviceAddress READ getAddress NOTIFY deviceChanged)
 
 public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
+    DeviceInfo(const QBluetoothDeviceInfo &device);
 
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
+    void setDevice(const QBluetoothDeviceInfo &device);
+    QString getName() const;
+    QString getAddress() const;
+    QBluetoothDeviceInfo getDevice() const;
 
+signals:
+    void deviceChanged();
 
 private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
+    QBluetoothDeviceInfo m_device;
 };
 
-#endif
+#endif // DEVICEINFO_H

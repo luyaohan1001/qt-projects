@@ -1,6 +1,6 @@
-/****************************************************************************
+/***************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2013 BlackBerry Limited. All rights reserved.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtBluetooth module of the Qt Toolkit.
@@ -48,47 +48,42 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+import QtQuick 2.0
 
-#include "ui_device.h"
+Rectangle {
+    width: parent.width/3*2
+    height: dialogTextId.height + background.height + 20
+    z: 50
+    property string dialogText: ""
+    property bool busyImage: true
+    border.width: 1
+    border.color: "#363636"
+    radius: 10
 
-#include <qbluetoothlocaldevice.h>
+    Text {
+        id: dialogTextId
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top;
+        anchors.topMargin: 10
 
-#include <QDialog>
+        elide: Text.ElideMiddle
+        text: dialogText
+        color: "#363636"
+        wrapMode: Text.Wrap
+    }
 
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
+    Image {
+        id: background
 
-QT_USE_NAMESPACE
-
-class DeviceDiscoveryDialog : public QDialog
-{
-    Q_OBJECT
-
-public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
-
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
-
-
-private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
-};
-
-#endif
+        width:20
+        height:20
+        anchors.top: dialogTextId.bottom
+        anchors.horizontalCenter: dialogTextId.horizontalCenter
+        visible: parent.busyImage
+        source: "busy_dark.png"
+        fillMode: Image.PreserveAspectFit
+        NumberAnimation on rotation { duration: 3000; from:0; to: 360; loops: Animation.Infinite}
+    }
+}

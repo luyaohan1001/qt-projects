@@ -1,9 +1,9 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtBluetooth module of the Qt Toolkit.
+** This file is part of the examples of the QtBluetooth module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** Commercial License Usage
@@ -48,47 +48,54 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+pragma Singleton
+import QtQuick 2.5
 
-#include "ui_device.h"
+Item {
+    property int wHeight
+    property int wWidth
 
-#include <qbluetoothlocaldevice.h>
+    // Colors
+    readonly property color backgroundColor: "#2d3037"
+    readonly property color buttonColor: "#202227"
+    readonly property color buttonPressedColor: "#6ccaf2"
+    readonly property color disabledButtonColor: "#555555"
+    readonly property color viewColor: "#202227"
+    readonly property color delegate1Color: Qt.darker(viewColor, 1.2)
+    readonly property color delegate2Color: Qt.lighter(viewColor, 1.2)
+    readonly property color textColor: "#ffffff"
+    readonly property color textDarkColor: "#232323"
+    readonly property color disabledTextColor: "#777777"
+    readonly property color sliderColor: "#6ccaf2"
+    readonly property color errorColor: "#ba3f62"
+    readonly property color infoColor: "#3fba62"
 
-#include <QDialog>
+    // Font sizes
+    property real microFontSize: hugeFontSize * 0.2
+    property real tinyFontSize: hugeFontSize * 0.4
+    property real smallTinyFontSize: hugeFontSize * 0.5
+    property real smallFontSize: hugeFontSize * 0.6
+    property real mediumFontSize: hugeFontSize * 0.7
+    property real bigFontSize: hugeFontSize * 0.8
+    property real largeFontSize: hugeFontSize * 0.9
+    property real hugeFontSize: (wWidth + wHeight) * 0.03
+    property real giganticFontSize: (wWidth + wHeight) * 0.04
 
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
+    // Some other values
+    property real fieldHeight: wHeight * 0.08
+    property real fieldMargin: fieldHeight * 0.5
+    property real buttonHeight: wHeight * 0.08
+    property real buttonRadius: buttonHeight * 0.1
 
-QT_USE_NAMESPACE
+    // Some help functions
+    function widthForHeight(h, ss)
+    {
+        return h/ss.height * ss.width;
+    }
 
-class DeviceDiscoveryDialog : public QDialog
-{
-    Q_OBJECT
+    function heightForWidth(w, ss)
+    {
+        return w/ss.width * ss.height;
+    }
 
-public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
-
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
-
-
-private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
-};
-
-#endif
+}

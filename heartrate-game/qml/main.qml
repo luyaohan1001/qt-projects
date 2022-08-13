@@ -1,9 +1,9 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtBluetooth module of the Qt Toolkit.
+** This file is part of the examples of the QtBluetooth module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** Commercial License Usage
@@ -48,47 +48,58 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+import QtQuick 2.7
+import QtQuick.Window 2.2
+import "."
 
-#include "ui_device.h"
+Window {
+    id: wroot
+    visible: true
+    width: 720 * .7
+    height: 1240 * .7
+    title: qsTr("HeartRateGame")
+    color: GameSettings.backgroundColor
 
-#include <qbluetoothlocaldevice.h>
+    Component.onCompleted: {
+        GameSettings.wWidth = Qt.binding(function() {return width})
+        GameSettings.wHeight = Qt.binding(function() {return height})
+    }
 
-#include <QDialog>
+    Loader {
+        id: splashLoader
+        anchors.fill: parent
+        source: "SplashScreen.qml"
+        asynchronous: false
+        visible: true
 
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
+        onStatusChanged: {
+            if (status === Loader.Ready) {
+                appLoader.setSource("App.qml");
+            }
+        }
+    }
 
-QT_USE_NAMESPACE
+    Connections {
+        target: splashLoader.item
+        onReadyToGo: {
+            appLoader.visible = true
+            appLoader.item.init()
+            splashLoader.visible = false
+            splashLoader.setSource("")
+            appLoader.item.forceActiveFocus();
+        }
+    }
 
-class DeviceDiscoveryDialog : public QDialog
-{
-    Q_OBJECT
-
-public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
-
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
-
-
-private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
-};
-
-#endif
+    Loader {
+        id: appLoader
+        anchors.fill: parent
+        visible: false
+        asynchronous: true
+        onStatusChanged: {
+            if (status === Loader.Ready)
+                splashLoader.item.appReady()
+            if (status === Loader.Error)
+                splashLoader.item.errorInLoadingApp();
+        }
+    }
+}

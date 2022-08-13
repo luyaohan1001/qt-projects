@@ -1,5 +1,6 @@
-/****************************************************************************
+/***************************************************************************
 **
+** Copyright (C) 2013 BlackBerry Limited. All rights reserved.
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
@@ -48,47 +49,60 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+#include "serviceinfo.h"
 
-#include "ui_device.h"
-
-#include <qbluetoothlocaldevice.h>
-
-#include <QDialog>
-
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
-
-QT_USE_NAMESPACE
-
-class DeviceDiscoveryDialog : public QDialog
+ServiceInfo::ServiceInfo(QLowEnergyService *service):
+    m_service(service)
 {
-    Q_OBJECT
+    m_service->setParent(this);
+}
 
-public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
+QLowEnergyService *ServiceInfo::service() const
+{
+    return m_service;
+}
 
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
+QString ServiceInfo::getName() const
+{
+    if (!m_service)
+        return QString();
 
+    return m_service->serviceName();
+}
 
-private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
-};
+QString ServiceInfo::getType() const
+{
+    if (!m_service)
+        return QString();
 
-#endif
+    QString result;
+    if (m_service->type() & QLowEnergyService::PrimaryService)
+        result += QStringLiteral("primary");
+    else
+        result += QStringLiteral("secondary");
+
+    if (m_service->type() & QLowEnergyService::IncludedService)
+        result += QStringLiteral(" included");
+
+    result.prepend('<').append('>');
+
+    return result;
+}
+
+QString ServiceInfo::getUuid() const
+{
+    if (!m_service)
+        return QString();
+
+    const QBluetoothUuid uuid = m_service->serviceUuid();
+    bool success = false;
+    quint16 result16 = uuid.toUInt16(&success);
+    if (success)
+        return QStringLiteral("0x") + QString::number(result16, 16);
+
+    quint32 result32 = uuid.toUInt32(&success);
+    if (success)
+        return QStringLiteral("0x") + QString::number(result32, 16);
+
+    return uuid.toString().remove(QLatin1Char('{')).remove(QLatin1Char('}'));
+}

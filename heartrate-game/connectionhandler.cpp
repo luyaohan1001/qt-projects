@@ -1,9 +1,9 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtBluetooth module of the Qt Toolkit.
+** This file is part of the examples of the QtBluetooth module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** Commercial License Usage
@@ -48,47 +48,46 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+#include "heartrate-global.h"
+#include "connectionhandler.h"
+#include <QtBluetooth/qtbluetooth-config.h>
+#include <QtCore/qsystemdetection.h>
 
-#include "ui_device.h"
-
-#include <qbluetoothlocaldevice.h>
-
-#include <QDialog>
-
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
-
-QT_USE_NAMESPACE
-
-class DeviceDiscoveryDialog : public QDialog
+ConnectionHandler::ConnectionHandler(QObject *parent) : QObject(parent)
 {
-    Q_OBJECT
+    connect(&m_localDevice, &QBluetoothLocalDevice::hostModeStateChanged,
+            this, &ConnectionHandler::hostModeChanged);
+}
 
-public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
-
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
-
-
-private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
-};
-
+bool ConnectionHandler::alive() const
+{
+#if defined(SIMULATOR) || defined(QT_PLATFORM_UIKIT)
+    return true;
+#else
+    return m_localDevice.isValid() && m_localDevice.hostMode() != QBluetoothLocalDevice::HostPoweredOff;
 #endif
+}
+
+bool ConnectionHandler::requiresAddressType() const
+{
+#if QT_CONFIG(bluez)
+    return true;
+#else
+    return false;
+#endif
+}
+
+QString ConnectionHandler::name() const
+{
+    return m_localDevice.name();
+}
+
+QString ConnectionHandler::address() const
+{
+    return m_localDevice.address().toString();
+}
+
+void ConnectionHandler::hostModeChanged(QBluetoothLocalDevice::HostMode /*mode*/)
+{
+    emit deviceChanged();
+}

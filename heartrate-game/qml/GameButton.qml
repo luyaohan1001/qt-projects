@@ -1,9 +1,9 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtBluetooth module of the Qt Toolkit.
+** This file is part of the examples of the QtBluetooth module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** Commercial License Usage
@@ -48,47 +48,41 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+import QtQuick 2.5
+import "."
 
-#include "ui_device.h"
+Rectangle {
+    id: button
+    color: baseColor
+    onEnabledChanged: checkColor()
+    radius: GameSettings.buttonRadius
 
-#include <qbluetoothlocaldevice.h>
+    property color baseColor: GameSettings.buttonColor
+    property color pressedColor: GameSettings.buttonPressedColor
+    property color disabledColor: GameSettings.disabledButtonColor
 
-#include <QDialog>
+    signal clicked()
 
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
+    function checkColor()
+    {
+        if (!button.enabled) {
+            button.color = disabledColor
+        } else {
+            if (mouseArea.containsPress)
+                button.color = pressedColor
+            else
+                button.color = baseColor
+        }
+    }
 
-QT_USE_NAMESPACE
-
-class DeviceDiscoveryDialog : public QDialog
-{
-    Q_OBJECT
-
-public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
-
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
-
-
-private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
-};
-
-#endif
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        onPressed: checkColor()
+        onReleased: checkColor()
+        onClicked: {
+            checkColor()
+            button.clicked()
+        }
+    }
+}

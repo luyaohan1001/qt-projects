@@ -1,9 +1,9 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtBluetooth module of the Qt Toolkit.
+** This file is part of the examples of the QtBluetooth module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** Commercial License Usage
@@ -48,47 +48,43 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+import QtQuick 2.5
+import "."
 
-#include "ui_device.h"
+Item {
+    id: root
+    anchors.fill: parent
 
-#include <qbluetoothlocaldevice.h>
+    property bool appIsReady: false
+    property bool splashIsReady: false
 
-#include <QDialog>
+    property bool ready: appIsReady && splashIsReady
+    onReadyChanged: if (ready) readyToGo();
 
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
+    signal readyToGo()
 
-QT_USE_NAMESPACE
+    function appReady()
+    {
+        appIsReady = true
+    }
 
-class DeviceDiscoveryDialog : public QDialog
-{
-    Q_OBJECT
+    function errorInLoadingApp()
+    {
+        Qt.quit()
+    }
 
-public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
+    Image {
+        anchors.centerIn: parent
+        width: Math.min(parent.height, parent.width)*0.6
+        height: GameSettings.heightForWidth(width, sourceSize)
+        source: "images/logo.png"
+    }
 
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
+    Timer {
+        id: splashTimer
+        interval: 1000
+        onTriggered: splashIsReady = true
+    }
 
-
-private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
-};
-
-#endif
+    Component.onCompleted: splashTimer.start()
+}

@@ -63,6 +63,9 @@ DeviceDiscoveryDialog::DeviceDiscoveryDialog(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // If the addresses are not known, log the addresses and create discoveryAgent by that.
+    // logLocalDeviceAddresses()
+
     /*
      * In case of multiple Bluetooth adapters it is possible to set adapter
      * which will be used. Example code:
@@ -71,14 +74,19 @@ DeviceDiscoveryDialog::DeviceDiscoveryDialog(QWidget *parent)
      * discoveryAgent = new QBluetoothDeviceDiscoveryAgent(address);
      *
      **/
-
-    discoveryAgent = new QBluetoothDeviceDiscoveryAgent();
+    QBluetoothAddress address("A0:9F:10:C0:79:7A");
+    discoveryAgent = new QBluetoothDeviceDiscoveryAgent(address);
 
     connect(ui->inquiryType, SIGNAL(toggled(bool)), this, SLOT(setGeneralUnlimited(bool)));
+
+    // Start scanning.
     connect(ui->scan, SIGNAL(clicked()), this, SLOT(startScan()));
 
+    // Add device to list when one is discovered.
     connect(discoveryAgent, SIGNAL(deviceDiscovered(QBluetoothDeviceInfo)),
             this, SLOT(addDevice(QBluetoothDeviceInfo)));
+
+    // Scan finished call back.
     connect(discoveryAgent, SIGNAL(finished()), this, SLOT(scanFinished()));
 
     connect(ui->list, SIGNAL(itemActivated(QListWidgetItem*)),
@@ -88,7 +96,8 @@ DeviceDiscoveryDialog::DeviceDiscoveryDialog(QWidget *parent)
             this, SLOT(hostModeStateChanged(QBluetoothLocalDevice::HostMode)));
 
     hostModeStateChanged(localDevice->hostMode());
-    // add context menu for devices to be able to pair device
+
+    // Add context menu for devices to be able to pair device
     ui->list->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->list, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(displayPairingMenu(QPoint)));
     connect(localDevice, SIGNAL(pairingFinished(QBluetoothAddress,QBluetoothLocalDevice::Pairing))
@@ -96,6 +105,7 @@ DeviceDiscoveryDialog::DeviceDiscoveryDialog(QWidget *parent)
 
 }
 
+// Destructor.
 DeviceDiscoveryDialog::~DeviceDiscoveryDialog()
 {
     delete discoveryAgent;
@@ -104,18 +114,20 @@ DeviceDiscoveryDialog::~DeviceDiscoveryDialog()
 void DeviceDiscoveryDialog::addDevice(const QBluetoothDeviceInfo &info)
 {
     QString label = QString("%1 %2").arg(info.address().toString()).arg(info.name());
+
     QList<QListWidgetItem *> items = ui->list->findItems(label, Qt::MatchExactly);
+    ;
     if (items.empty()) {
         QListWidgetItem *item = new QListWidgetItem(label);
         QBluetoothLocalDevice::Pairing pairingStatus = localDevice->pairingStatus(info.address());
-        if (pairingStatus == QBluetoothLocalDevice::Paired || pairingStatus == QBluetoothLocalDevice::AuthorizedPaired )
+
+        if ( (pairingStatus == QBluetoothLocalDevice::Paired)
+             || (pairingStatus == QBluetoothLocalDevice::AuthorizedPaired))
             item->setForeground(QColor(Qt::green));
         else
             item->setForeground(QColor(Qt::black));
-
         ui->list->addItem(item);
     }
-
 }
 
 void DeviceDiscoveryDialog::startScan()
@@ -225,5 +237,16 @@ void DeviceDiscoveryDialog::pairingDone(const QBluetoothAddress &address, QBluet
             QListWidgetItem *item = items.at(var);
             item->setForeground(QColor(Qt::red));
         }
+    }
+}
+
+void DeviceDiscoveryDialog::logLocalDeviceAddresses()
+{
+    // Printing a list of local bluetooth device.
+    qInfo() << "Querying the bluetooth local devices...";
+    QList<QBluetoothHostInfo> localList = QBluetoothLocalDevice::allDevices();
+    for (auto itr = localList.begin(); itr != localList.end(); ++itr) {
+        qInfo() << "Local device name: " << itr->name();
+        qInfo() << "adapter address: " << itr->address();
     }
 }

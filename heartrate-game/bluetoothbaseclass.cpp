@@ -1,9 +1,9 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtBluetooth module of the Qt Toolkit.
+** This file is part of the examples of the QtBluetooth module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** Commercial License Usage
@@ -48,47 +48,40 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+#include "bluetoothbaseclass.h"
 
-#include "ui_device.h"
-
-#include <qbluetoothlocaldevice.h>
-
-#include <QDialog>
-
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
-
-QT_USE_NAMESPACE
-
-class DeviceDiscoveryDialog : public QDialog
+BluetoothBaseClass::BluetoothBaseClass(QObject *parent) : QObject(parent)
 {
-    Q_OBJECT
+}
 
-public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
+QString BluetoothBaseClass::error() const
+{
+    return m_error;
+}
 
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
+QString BluetoothBaseClass::info() const
+{
+    return m_info;
+}
 
+void BluetoothBaseClass::setError(const QString &error)
+{
+    if (m_error != error) {
+        m_error = error;
+        emit errorChanged();
+    }
+}
 
-private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
-};
+void BluetoothBaseClass::setInfo(const QString &info)
+{
+    if (m_info != info) {
+        m_info = info;
+        emit infoChanged();
+    }
+}
 
-#endif
+void BluetoothBaseClass::clearMessages()
+{
+    setInfo("");
+    setError("");
+}

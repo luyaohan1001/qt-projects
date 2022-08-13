@@ -1,9 +1,9 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtBluetooth module of the Qt Toolkit.
+** This file is part of the examples of the QtBluetooth module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** Commercial License Usage
@@ -48,47 +48,36 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+#ifndef CONNECTIONHANDLER_H
+#define CONNECTIONHANDLER_H
 
-#include "ui_device.h"
+#include <QObject>
+#include <QBluetoothLocalDevice>
 
-#include <qbluetoothlocaldevice.h>
-
-#include <QDialog>
-
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
-
-QT_USE_NAMESPACE
-
-class DeviceDiscoveryDialog : public QDialog
+class ConnectionHandler : public QObject
 {
+    Q_PROPERTY(bool alive READ alive NOTIFY deviceChanged)
+    Q_PROPERTY(QString name READ name NOTIFY deviceChanged)
+    Q_PROPERTY(QString address READ address NOTIFY deviceChanged)
+    Q_PROPERTY(bool requiresAddressType READ requiresAddressType CONSTANT)
+
     Q_OBJECT
-
 public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
+    explicit ConnectionHandler(QObject *parent = nullptr);
 
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
+    bool alive() const;
+    bool requiresAddressType() const;
+    QString name() const;
+    QString address() const;
+
+signals:
+    void deviceChanged();
+
 private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
-
+    void hostModeChanged(QBluetoothLocalDevice::HostMode mode);
 
 private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
+    QBluetoothLocalDevice m_localDevice;
 };
 
-#endif
+#endif // CONNECTIONHANDLER_H

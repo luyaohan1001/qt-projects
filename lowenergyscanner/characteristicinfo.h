@@ -1,5 +1,6 @@
-/****************************************************************************
+/***************************************************************************
 **
+** Copyright (C) 2013 BlackBerry Limited. All rights reserved.
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
@@ -48,47 +49,37 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+#ifndef CHARACTERISTICINFO_H
+#define CHARACTERISTICINFO_H
+#include <QObject>
+#include <QString>
+#include <QtBluetooth/QLowEnergyCharacteristic>
 
-#include "ui_device.h"
-
-#include <qbluetoothlocaldevice.h>
-
-#include <QDialog>
-
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
-
-QT_USE_NAMESPACE
-
-class DeviceDiscoveryDialog : public QDialog
+class CharacteristicInfo: public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString characteristicName READ getName NOTIFY characteristicChanged)
+    Q_PROPERTY(QString characteristicUuid READ getUuid NOTIFY characteristicChanged)
+    Q_PROPERTY(QString characteristicValue READ getValue NOTIFY characteristicChanged)
+    Q_PROPERTY(QString characteristicHandle READ getHandle NOTIFY characteristicChanged)
+    Q_PROPERTY(QString characteristicPermission READ getPermission NOTIFY characteristicChanged)
 
 public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
+    CharacteristicInfo() = default;
+    CharacteristicInfo(const QLowEnergyCharacteristic &characteristic);
+    void setCharacteristic(const QLowEnergyCharacteristic &characteristic);
+    QString getName() const;
+    QString getUuid() const;
+    QString getValue() const;
+    QString getHandle() const;
+    QString getPermission() const;
+    QLowEnergyCharacteristic getCharacteristic() const;
 
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
-
+Q_SIGNALS:
+    void characteristicChanged();
 
 private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
+    QLowEnergyCharacteristic m_characteristic;
 };
 
-#endif
+#endif // CHARACTERISTICINFO_H

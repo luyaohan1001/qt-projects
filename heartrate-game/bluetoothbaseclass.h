@@ -1,9 +1,9 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtBluetooth module of the Qt Toolkit.
+** This file is part of the examples of the QtBluetooth module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** Commercial License Usage
@@ -48,47 +48,35 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+#ifndef BLUETOOTHBASECLASS_H
+#define BLUETOOTHBASECLASS_H
 
-#include "ui_device.h"
+#include <QObject>
 
-#include <qbluetoothlocaldevice.h>
-
-#include <QDialog>
-
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
-
-QT_USE_NAMESPACE
-
-class DeviceDiscoveryDialog : public QDialog
+class BluetoothBaseClass : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString error READ error WRITE setError NOTIFY errorChanged)
+    Q_PROPERTY(QString info READ info WRITE setInfo NOTIFY infoChanged)
 
 public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
+    explicit BluetoothBaseClass(QObject *parent = nullptr);
 
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
+    QString error() const;
+    void setError(const QString& error);
 
+    QString info() const;
+    void setInfo(const QString& info);
+
+    void clearMessages();
+
+signals:
+    void errorChanged();
+    void infoChanged();
 
 private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
+    QString m_error;
+    QString m_info;
 };
 
-#endif
+#endif // BLUETOOTHBASECLASS_H

@@ -1,5 +1,6 @@
-/****************************************************************************
+/***************************************************************************
 **
+** Copyright (C) 2013 BlackBerry Limited. All rights reserved.
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
@@ -48,47 +49,29 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+#ifndef SERVICEINFO_H
+#define SERVICEINFO_H
+#include <QtBluetooth/QLowEnergyService>
 
-#include "ui_device.h"
-
-#include <qbluetoothlocaldevice.h>
-
-#include <QDialog>
-
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
-
-QT_USE_NAMESPACE
-
-class DeviceDiscoveryDialog : public QDialog
+class ServiceInfo: public QObject
 {
     Q_OBJECT
-
+    Q_PROPERTY(QString serviceName READ getName NOTIFY serviceChanged)
+    Q_PROPERTY(QString serviceUuid READ getUuid NOTIFY serviceChanged)
+    Q_PROPERTY(QString serviceType READ getType NOTIFY serviceChanged)
 public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
+    ServiceInfo() = default;
+    ServiceInfo(QLowEnergyService *service);
+    QLowEnergyService *service() const;
+    QString getUuid() const;
+    QString getName() const;
+    QString getType() const;
 
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
-
+Q_SIGNALS:
+    void serviceChanged();
 
 private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
+    QLowEnergyService *m_service = nullptr;
 };
 
-#endif
+#endif // SERVICEINFO_H

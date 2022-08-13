@@ -1,5 +1,6 @@
-/****************************************************************************
+/***************************************************************************
 **
+** Copyright (C) 2013 BlackBerry Limited. All rights reserved.
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
@@ -48,47 +49,53 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+import QtQuick 2.0
 
-#include "ui_device.h"
+Rectangle {
 
-#include <qbluetoothlocaldevice.h>
+    property real menuWidth: 100
+    property real menuHeight: 50
+    property string menuText: "Search"
+    signal buttonClick()
 
-#include <QDialog>
+    height: menuHeight
+    width: menuWidth
 
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
+    Rectangle {
+        id: search
+        width: parent.width
+        height: parent.height
+        anchors.centerIn: parent
+        color: "#363636"
+        border.width: 1
+        border.color: "#E3E3E3"
+        radius: 5
+        Text {
+            id: searchText
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            anchors.fill: parent
+            text: menuText
+            elide: Text.ElideMiddle
+            color: "#E3E3E3"
+            wrapMode: Text.WordWrap
+        }
 
-QT_USE_NAMESPACE
+        MouseArea {
+            anchors.fill: parent
+            onPressed: {
+                search.width = search.width - 7
+                search.height = search.height - 5
+            }
 
-class DeviceDiscoveryDialog : public QDialog
-{
-    Q_OBJECT
+            onReleased: {
+                search.width = search.width + 7
+                search.height = search.height + 5
+            }
 
-public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
-
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
-
-
-private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
-};
-
-#endif
+            onClicked: {
+                buttonClick()
+            }
+        }
+    }
+}

@@ -1,9 +1,9 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtBluetooth module of the Qt Toolkit.
+** This file is part of the examples of the QtBluetooth module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** Commercial License Usage
@@ -48,47 +48,83 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+import QtQuick 2.5
 
-#include "ui_device.h"
+Item {
+    id: app
+    anchors.fill: parent
+    opacity: 0.0
 
-#include <qbluetoothlocaldevice.h>
+    Behavior on opacity { NumberAnimation { duration: 500 } }
 
-#include <QDialog>
+    property var lastPages: []
+    property int __currentIndex: 0
 
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
+    function init()
+    {
+        opacity = 1.0
+        showPage("Connect.qml")
+    }
 
-QT_USE_NAMESPACE
+    function prevPage()
+    {
+        lastPages.pop()
+        pageLoader.setSource(lastPages[lastPages.length-1])
+        __currentIndex = lastPages.length-1;
+    }
 
-class DeviceDiscoveryDialog : public QDialog
-{
-    Q_OBJECT
+    function showPage(name)
+    {
+        lastPages.push(name)
+        pageLoader.setSource(name)
+        __currentIndex = lastPages.length-1;
+    }
 
-public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
+    TitleBar {
+        id: titleBar
+        currentIndex: __currentIndex
 
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
+        onTitleClicked: {
+            if (index < __currentIndex)
+                pageLoader.item.close()
+        }
+    }
 
+    Loader {
+        id: pageLoader
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: titleBar.bottom
+        anchors.bottom: parent.bottom
 
-private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
-};
+        onStatusChanged: {
+            if (status === Loader.Ready)
+            {
+                pageLoader.item.init();
+                pageLoader.item.forceActiveFocus()
+            }
+        }
+    }
 
-#endif
+    Keys.onReleased: {
+        switch (event.key) {
+        case Qt.Key_Escape:
+        case Qt.Key_Back: {
+            if (__currentIndex > 0) {
+                pageLoader.item.close()
+                event.accepted = true
+            } else {
+                Qt.quit()
+            }
+            break;
+        }
+        default: break;
+        }
+    }
+
+    BluetoothAlarmDialog {
+        id: btAlarmDialog
+        anchors.fill: parent
+        visible: !connectionHandler.alive
+    }
+}

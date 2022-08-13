@@ -1,9 +1,9 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtBluetooth module of the Qt Toolkit.
+** This file is part of the examples of the QtBluetooth module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** Commercial License Usage
@@ -48,47 +48,52 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+import QtQuick 2.5
 
-#include "ui_device.h"
+GamePage {
 
-#include <qbluetoothlocaldevice.h>
+    Column {
+        anchors.centerIn: parent
+        width: parent.width
 
-#include <QDialog>
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.pixelSize: GameSettings.hugeFontSize
+            color: GameSettings.textColor
+            text: qsTr("RESULT")
+        }
 
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.pixelSize: GameSettings.giganticFontSize*3
+            color: GameSettings.textColor
+            text: (deviceHandler.maxHR - deviceHandler.minHR).toFixed(0)
+        }
 
-QT_USE_NAMESPACE
+        Item {
+            height: GameSettings.fieldHeight
+            width: 1
+        }
 
-class DeviceDiscoveryDialog : public QDialog
-{
-    Q_OBJECT
+        StatsLabel {
+            title: qsTr("MIN")
+            value: deviceHandler.minHR.toFixed(0)
+        }
 
-public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
+        StatsLabel {
+            title: qsTr("MAX")
+            value: deviceHandler.maxHR.toFixed(0)
+        }
 
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
+        StatsLabel {
+            title: qsTr("AVG")
+            value: deviceHandler.average.toFixed(1)
+        }
 
 
-private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
-};
-
-#endif
+        StatsLabel {
+            title: qsTr("CALORIES")
+            value: deviceHandler.calories.toFixed(3)
+        }
+    }
+}

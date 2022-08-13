@@ -1,9 +1,9 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtBluetooth module of the Qt Toolkit.
+** This file is part of the examples of the QtBluetooth module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** Commercial License Usage
@@ -48,47 +48,33 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+#include <QGuiApplication>
+#include <QLoggingCategory>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
 
-#include "ui_device.h"
+#include "connectionhandler.h"
+#include "devicefinder.h"
+#include "devicehandler.h"
 
-#include <qbluetoothlocaldevice.h>
-
-#include <QDialog>
-
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
-
-QT_USE_NAMESPACE
-
-class DeviceDiscoveryDialog : public QDialog
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
+    QLoggingCategory::setFilterRules(QStringLiteral("qt.bluetooth* = true"));
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication app(argc, argv);
 
-public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
+    ConnectionHandler connectionHandler;
+    DeviceHandler deviceHandler;
+    DeviceFinder deviceFinder(&deviceHandler);
 
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
+    qmlRegisterUncreatableType<DeviceHandler>("Shared", 1, 0, "AddressType", "Enum is not a type");
 
+    QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("connectionHandler", &connectionHandler);
+    engine.rootContext()->setContextProperty("deviceFinder", &deviceFinder);
+    engine.rootContext()->setContextProperty("deviceHandler", &deviceHandler);
 
-private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
-};
+    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
-#endif
+    return app.exec();
+}

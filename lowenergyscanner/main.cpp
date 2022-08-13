@@ -1,5 +1,6 @@
-/****************************************************************************
+/***************************************************************************
 **
+** Copyright (C) 2013 BlackBerry Limited. All rights reserved.
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
@@ -48,47 +49,25 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+#include <QtCore/QLoggingCategory>
+#include <QQmlContext>
+#include <QGuiApplication>
+#include <QQuickView>
+#include "device.h"
 
-#include "ui_device.h"
 
-#include <qbluetoothlocaldevice.h>
-
-#include <QDialog>
-
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
-
-QT_USE_NAMESPACE
-
-class DeviceDiscoveryDialog : public QDialog
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
+    //QLoggingCategory::setFilterRules(QStringLiteral("qt.bluetooth* = true"));
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication app(argc, argv);
 
-public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
+    Device d;
+    auto view = new QQuickView;
+    view->rootContext()->setContextProperty("device", &d);
 
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
-
-
-private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
-};
-
-#endif
+    view->setSource(QUrl("qrc:/assets/main.qml"));
+    view->setResizeMode(QQuickView::SizeRootObjectToView);
+    view->show();
+    return QGuiApplication::exec();
+}

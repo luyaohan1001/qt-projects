@@ -1,9 +1,9 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtBluetooth module of the Qt Toolkit.
+** This file is part of the examples of the QtBluetooth module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** Commercial License Usage
@@ -48,47 +48,75 @@
 **
 ****************************************************************************/
 
-#ifndef DEVICE_H
-#define DEVICE_H
+import QtQuick 2.5
 
-#include "ui_device.h"
+Item {
+    id: root
+    anchors.fill: parent
 
-#include <qbluetoothlocaldevice.h>
+    Rectangle {
+        anchors.fill: parent
+        color: "black"
+        opacity: 0.9
+    }
 
-#include <QDialog>
+    MouseArea {
+        id: eventEater
+    }
 
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceDiscoveryAgent)
-QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
+    Rectangle {
+        id: dialogFrame
 
-QT_USE_NAMESPACE
+        anchors.centerIn: parent
+        width: parent.width * 0.8
+        height: parent.height * 0.6
+        border.color: "#454545"
+        color: GameSettings.backgroundColor
+        radius: width * 0.05
 
-class DeviceDiscoveryDialog : public QDialog
-{
-    Q_OBJECT
+        Item {
+            id: dialogContainer
+            anchors.fill: parent
+            anchors.margins: parent.width*0.05
 
-public:
-    DeviceDiscoveryDialog(QWidget *parent = nullptr);
-    ~DeviceDiscoveryDialog();
-    void logLocalDeviceAddresses();
+            Image {
+                id: offOnImage
+                anchors.left: quitButton.left
+                anchors.right: quitButton.right
+                anchors.top: parent.top
+                height: GameSettings.heightForWidth(width, sourceSize)
+                source: "images/bt_off_to_on.png"
+            }
 
-public slots:
-    void addDevice(const QBluetoothDeviceInfo&);
-    void on_power_clicked(bool clicked);
-    void on_discoverable_clicked(bool clicked);
-    void displayPairingMenu(const QPoint &pos);
-    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
-private slots:
-    void startScan();
-    void scanFinished();
-    void setGeneralUnlimited(bool unlimited);
-    void itemActivated(QListWidgetItem *item);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
+            Text {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: offOnImage.bottom
+                anchors.bottom: quitButton.top
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                wrapMode: Text.WordWrap
+                font.pixelSize: GameSettings.mediumFontSize
+                color: GameSettings.textColor
+                text: qsTr("This application cannot be used without Bluetooth. Please switch Bluetooth ON to continue.")
+            }
 
+            GameButton {
+                id: quitButton
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: dialogContainer.width * 0.6
+                height: GameSettings.buttonHeight
+                onClicked: Qt.quit()
 
-private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothLocalDevice *localDevice;
-    Ui_DeviceDiscovery *ui;
-};
+                Text {
+                    anchors.centerIn: parent
+                    color: GameSettings.textColor
+                    font.pixelSize: GameSettings.bigFontSize
+                    text: qsTr("Quit")
+                }
+            }
+        }
+    }
+}
 
-#endif
