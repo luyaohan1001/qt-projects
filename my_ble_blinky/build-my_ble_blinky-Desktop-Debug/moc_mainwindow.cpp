@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[19];
-    char stringdata0[371];
+    QByteArrayData data[20];
+    char stringdata0[399];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -46,11 +46,12 @@ QT_MOC_LITERAL(10, 190, 14), // "QBluetoothUuid"
 QT_MOC_LITERAL(11, 205, 4), // "gatt"
 QT_MOC_LITERAL(12, 210, 25), // "on_bleServiceScanFinished"
 QT_MOC_LITERAL(13, 236, 21), // "on_bleControllerError"
-QT_MOC_LITERAL(14, 258, 25), // "on_bleControllerConnected"
-QT_MOC_LITERAL(15, 284, 28), // "on_bleControllerDisconnected"
-QT_MOC_LITERAL(16, 313, 35), // "on_listWidgetBleDevices_itemC..."
-QT_MOC_LITERAL(17, 349, 16), // "QListWidgetItem*"
-QT_MOC_LITERAL(18, 366, 4) // "item"
+QT_MOC_LITERAL(14, 258, 27), // "QLowEnergyController::Error"
+QT_MOC_LITERAL(15, 286, 25), // "on_bleControllerConnected"
+QT_MOC_LITERAL(16, 312, 28), // "on_bleControllerDisconnected"
+QT_MOC_LITERAL(17, 341, 35), // "on_listWidgetBleDevices_itemC..."
+QT_MOC_LITERAL(18, 377, 16), // "QListWidgetItem*"
+QT_MOC_LITERAL(19, 394, 4) // "item"
 
     },
     "MainWindow\0on_pushButtonToggle_clicked\0"
@@ -60,7 +61,8 @@ QT_MOC_LITERAL(18, 366, 4) // "item"
     "on_pushButtonBleConnect_clicked\0"
     "on_bleServiceDiscovered\0QBluetoothUuid\0"
     "gatt\0on_bleServiceScanFinished\0"
-    "on_bleControllerError\0on_bleControllerConnected\0"
+    "on_bleControllerError\0QLowEnergyController::Error\0"
+    "on_bleControllerConnected\0"
     "on_bleControllerDisconnected\0"
     "on_listWidgetBleDevices_itemClicked\0"
     "QListWidgetItem*\0item"
@@ -88,10 +90,10 @@ static const uint qt_meta_data_MainWindow[] = {
        8,    0,   75,    2, 0x08 /* Private */,
        9,    1,   76,    2, 0x08 /* Private */,
       12,    0,   79,    2, 0x08 /* Private */,
-      13,    0,   80,    2, 0x08 /* Private */,
-      14,    0,   81,    2, 0x08 /* Private */,
-      15,    0,   82,    2, 0x08 /* Private */,
-      16,    1,   83,    2, 0x08 /* Private */,
+      13,    1,   80,    2, 0x08 /* Private */,
+      15,    0,   83,    2, 0x08 /* Private */,
+      16,    0,   84,    2, 0x08 /* Private */,
+      17,    1,   85,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -101,10 +103,10 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 10,   11,
     QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 14,    2,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 17,   18,
+    QMetaType::Void, 0x80000000 | 18,   19,
 
        0        // eod
 };
@@ -122,7 +124,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 4: _t->on_pushButtonBleConnect_clicked(); break;
         case 5: _t->on_bleServiceDiscovered((*reinterpret_cast< const QBluetoothUuid(*)>(_a[1]))); break;
         case 6: _t->on_bleServiceScanFinished(); break;
-        case 7: _t->on_bleControllerError(); break;
+        case 7: _t->on_bleControllerError((*reinterpret_cast< QLowEnergyController::Error(*)>(_a[1]))); break;
         case 8: _t->on_bleControllerConnected(); break;
         case 9: _t->on_bleControllerDisconnected(); break;
         case 10: _t->on_listWidgetBleDevices_itemClicked((*reinterpret_cast< QListWidgetItem*(*)>(_a[1]))); break;
@@ -143,6 +145,13 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
             default: *reinterpret_cast<int*>(_a[0]) = -1; break;
             case 0:
                 *reinterpret_cast<int*>(_a[0]) = qRegisterMetaType< QBluetoothUuid >(); break;
+            }
+            break;
+        case 7:
+            switch (*reinterpret_cast<int*>(_a[1])) {
+            default: *reinterpret_cast<int*>(_a[0]) = -1; break;
+            case 0:
+                *reinterpret_cast<int*>(_a[0]) = qRegisterMetaType< QLowEnergyController::Error >(); break;
             }
             break;
         }

@@ -36,7 +36,7 @@ private slots:
     void on_pushButtonBleConnect_clicked();
     void on_bleServiceDiscovered(const QBluetoothUuid &gatt);
     void on_bleServiceScanFinished();
-    void on_bleControllerError();
+    void on_bleControllerError(QLowEnergyController::Error);
     void on_bleControllerConnected();
     void on_bleControllerDisconnected();
 
@@ -47,7 +47,7 @@ private:
     QBluetoothLocalDevice *localDevice;
 
     // Discovers ble devices.
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
+    QBluetoothDeviceDiscoveryAgent *discoveryAgent = NULL;
     // Stores bleDevices Name - Address
     QHash<QString, QBluetoothDeviceInfo> bleDevices;
 
@@ -59,5 +59,8 @@ private:
 
     // Create a ble characteristics.
     QList<QLowEnergyCharacteristic> bleCharacteristicsList;
+
+    // ble characiertics interested to read/write
+    QLowEnergyCharacteristic *bleCharacteristic;
 };
 #endif // MAINWINDOW_H
