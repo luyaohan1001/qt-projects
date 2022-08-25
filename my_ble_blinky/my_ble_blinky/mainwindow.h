@@ -27,10 +27,12 @@ public:
 private slots:
     void on_pushButtonToggle_clicked();
 
-    // Callbacks for searching ble devices.
+    // Callbacks for searching near ble devices.
     void on_pushButtonScan_clicked();
     void on_bleDeviceDiscovered(const QBluetoothDeviceInfo &info);
     void on_bleScanFinished();
+    void on_bleScanErrorOccured(QBluetoothDeviceDiscoveryAgent::Error error);
+    void on_bleDeviceScanFinished();
 
     // Callbacks for connecting to peripherals and search for services.
     void on_pushButtonBleConnect_clicked();
@@ -42,25 +44,28 @@ private slots:
 
     void on_listWidgetBleDevices_itemClicked(QListWidgetItem *item);
 
+
+
 private:
     Ui::MainWindow *ui;
-    QBluetoothLocalDevice *localDevice;
+    QBluetoothLocalDevice *m_localDevice;
 
     // Discovers ble devices.
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent = NULL;
+    QBluetoothDeviceDiscoveryAgent *m_discoveryAgent = NULL;
+
     // Stores bleDevices Name - Address
-    QHash<QString, QBluetoothDeviceInfo> bleDevices;
+    QHash<QString, QBluetoothDeviceInfo> m_bleDevices;
 
     // Create a central device.
-    QLowEnergyController *bleController;
+    QLowEnergyController *m_bleController = NULL;
 
     // Create a ble service.
-    QLowEnergyService *bleService;
+    QLowEnergyService *m_bleService = NULL;
 
     // Create a ble characteristics.
-    QList<QLowEnergyCharacteristic> bleCharacteristicsList;
+    QList<QLowEnergyCharacteristic> m_bleCharacteristicsList;
 
     // ble characiertics interested to read/write
-    QLowEnergyCharacteristic *bleCharacteristic;
+    QLowEnergyCharacteristic *m_bleCharacteristic = NULL;
 };
 #endif // MAINWINDOW_H
