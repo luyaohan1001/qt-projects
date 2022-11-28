@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[24];
-    char stringdata0[491];
+    QByteArrayData data[30];
+    char stringdata0[656];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -55,7 +55,13 @@ QT_MOC_LITERAL(19, 378, 25), // "on_bleControllerConnected"
 QT_MOC_LITERAL(20, 404, 28), // "on_bleControllerDisconnected"
 QT_MOC_LITERAL(21, 433, 35), // "on_listWidgetBleDevices_itemC..."
 QT_MOC_LITERAL(22, 469, 16), // "QListWidgetItem*"
-QT_MOC_LITERAL(23, 486, 4) // "item"
+QT_MOC_LITERAL(23, 486, 4), // "item"
+QT_MOC_LITERAL(24, 491, 38), // "on_heartRateMonitorTimerTimeo..."
+QT_MOC_LITERAL(25, 530, 30), // "on_heartRateCharacteristicRead"
+QT_MOC_LITERAL(26, 561, 24), // "QLowEnergyCharacteristic"
+QT_MOC_LITERAL(27, 586, 14), // "characteristic"
+QT_MOC_LITERAL(28, 601, 13), // "heartRateData"
+QT_MOC_LITERAL(29, 615, 40) // "on_pushButtonOpenHeartRateDia..."
 
     },
     "MainWindow\0on_pushButtonToggle_clicked\0"
@@ -71,7 +77,11 @@ QT_MOC_LITERAL(23, 486, 4) // "item"
     "on_bleControllerConnected\0"
     "on_bleControllerDisconnected\0"
     "on_listWidgetBleDevices_itemClicked\0"
-    "QListWidgetItem*\0item"
+    "QListWidgetItem*\0item\0"
+    "on_heartRateMonitorTimerTimeoutReached\0"
+    "on_heartRateCharacteristicRead\0"
+    "QLowEnergyCharacteristic\0characteristic\0"
+    "heartRateData\0on_pushButtonOpenHeartRateDialog_clicked"
 };
 #undef QT_MOC_LITERAL
 
@@ -81,7 +91,7 @@ static const uint qt_meta_data_MainWindow[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      13,   14, // methods
+      16,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -89,19 +99,22 @@ static const uint qt_meta_data_MainWindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   79,    2, 0x08 /* Private */,
-       3,    0,   80,    2, 0x08 /* Private */,
-       4,    1,   81,    2, 0x08 /* Private */,
-       7,    0,   84,    2, 0x08 /* Private */,
-       8,    1,   85,    2, 0x08 /* Private */,
-      11,    0,   88,    2, 0x08 /* Private */,
-      12,    0,   89,    2, 0x08 /* Private */,
-      13,    1,   90,    2, 0x08 /* Private */,
-      16,    0,   93,    2, 0x08 /* Private */,
-      17,    1,   94,    2, 0x08 /* Private */,
-      19,    0,   97,    2, 0x08 /* Private */,
-      20,    0,   98,    2, 0x08 /* Private */,
-      21,    1,   99,    2, 0x08 /* Private */,
+       1,    0,   94,    2, 0x0a /* Public */,
+       3,    0,   95,    2, 0x0a /* Public */,
+       4,    1,   96,    2, 0x0a /* Public */,
+       7,    0,   99,    2, 0x0a /* Public */,
+       8,    1,  100,    2, 0x0a /* Public */,
+      11,    0,  103,    2, 0x0a /* Public */,
+      12,    0,  104,    2, 0x0a /* Public */,
+      13,    1,  105,    2, 0x0a /* Public */,
+      16,    0,  108,    2, 0x0a /* Public */,
+      17,    1,  109,    2, 0x0a /* Public */,
+      19,    0,  112,    2, 0x0a /* Public */,
+      20,    0,  113,    2, 0x0a /* Public */,
+      21,    1,  114,    2, 0x0a /* Public */,
+      24,    0,  117,    2, 0x0a /* Public */,
+      25,    2,  118,    2, 0x0a /* Public */,
+      29,    0,  123,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -117,6 +130,9 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 22,   23,
+    QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 26, QMetaType::QByteArray,   27,   28,
+    QMetaType::Void,
 
        0        // eod
 };
@@ -140,6 +156,9 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 10: _t->on_bleControllerConnected(); break;
         case 11: _t->on_bleControllerDisconnected(); break;
         case 12: _t->on_listWidgetBleDevices_itemClicked((*reinterpret_cast< QListWidgetItem*(*)>(_a[1]))); break;
+        case 13: _t->on_heartRateMonitorTimerTimeoutReached(); break;
+        case 14: _t->on_heartRateCharacteristicRead((*reinterpret_cast< const QLowEnergyCharacteristic(*)>(_a[1])),(*reinterpret_cast< const QByteArray(*)>(_a[2]))); break;
+        case 15: _t->on_pushButtonOpenHeartRateDialog_clicked(); break;
         default: ;
         }
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
@@ -164,6 +183,13 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
             default: *reinterpret_cast<int*>(_a[0]) = -1; break;
             case 0:
                 *reinterpret_cast<int*>(_a[0]) = qRegisterMetaType< QLowEnergyController::Error >(); break;
+            }
+            break;
+        case 14:
+            switch (*reinterpret_cast<int*>(_a[1])) {
+            default: *reinterpret_cast<int*>(_a[0]) = -1; break;
+            case 0:
+                *reinterpret_cast<int*>(_a[0]) = qRegisterMetaType< QLowEnergyCharacteristic >(); break;
             }
             break;
         }
@@ -199,13 +225,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 13)
+        if (_id < 16)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 13;
+        _id -= 16;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 13)
+        if (_id < 16)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 13;
+        _id -= 16;
     }
     return _id;
 }

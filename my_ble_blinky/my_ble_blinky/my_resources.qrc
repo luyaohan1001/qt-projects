@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/my_resources">
+        <file>icons/heart-icon.png</file>
+    </qresource>
+</RCC>

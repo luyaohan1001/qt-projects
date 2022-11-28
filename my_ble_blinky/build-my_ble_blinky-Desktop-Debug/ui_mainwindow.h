@@ -35,6 +35,7 @@ public:
     QListWidget *listWidgetBleDevices;
     QLabel *labelBleConnectionStatus;
     QTextBrowser *textBrowserDeviceAttributes;
+    QPushButton *pushButtonOpenHeartRateDialog;
     QMenuBar *menubar;
     QMenu *menuBluetooth_LE_Console;
     QStatusBar *statusbar;
@@ -43,7 +44,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(458, 605);
+        MainWindow->resize(527, 605);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         pushButtonBleConnect = new QPushButton(centralwidget);
@@ -60,17 +61,20 @@ public:
         pushButtonScan->setGeometry(QRect(10, 0, 181, 21));
         listWidgetBleDevices = new QListWidget(centralwidget);
         listWidgetBleDevices->setObjectName(QString::fromUtf8("listWidgetBleDevices"));
-        listWidgetBleDevices->setGeometry(QRect(10, 20, 441, 301));
+        listWidgetBleDevices->setGeometry(QRect(10, 20, 501, 301));
         labelBleConnectionStatus = new QLabel(centralwidget);
         labelBleConnectionStatus->setObjectName(QString::fromUtf8("labelBleConnectionStatus"));
         labelBleConnectionStatus->setGeometry(QRect(200, 0, 251, 21));
         textBrowserDeviceAttributes = new QTextBrowser(centralwidget);
         textBrowserDeviceAttributes->setObjectName(QString::fromUtf8("textBrowserDeviceAttributes"));
-        textBrowserDeviceAttributes->setGeometry(QRect(10, 360, 441, 201));
+        textBrowserDeviceAttributes->setGeometry(QRect(10, 360, 501, 201));
+        pushButtonOpenHeartRateDialog = new QPushButton(centralwidget);
+        pushButtonOpenHeartRateDialog->setObjectName(QString::fromUtf8("pushButtonOpenHeartRateDialog"));
+        pushButtonOpenHeartRateDialog->setGeometry(QRect(470, 320, 41, 41));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 458, 22));
+        menubar->setGeometry(QRect(0, 0, 527, 22));
         menuBluetooth_LE_Console = new QMenu(menubar);
         menuBluetooth_LE_Console->setObjectName(QString::fromUtf8("menuBluetooth_LE_Console"));
         MainWindow->setMenuBar(menubar);
@@ -93,6 +97,7 @@ public:
         pushButtonToggle->setText(QCoreApplication::translate("MainWindow", "Toggle Blinky", nullptr));
         pushButtonScan->setText(QCoreApplication::translate("MainWindow", "Scan Peripheral Devices", nullptr));
         labelBleConnectionStatus->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
+        pushButtonOpenHeartRateDialog->setText(QString());
         menuBluetooth_LE_Console->setTitle(QCoreApplication::translate("MainWindow", "Bluetooth LE Console", nullptr));
     } // retranslateUi
 
